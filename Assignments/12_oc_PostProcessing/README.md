@@ -53,14 +53,14 @@ const mat3 DEUTERANOPIA = mat3(
    base hardly change. Each row of the matrix sums to one, so grays stay gray.
 
 4. To see why the matrix must be applied to linear values, temporarily apply it to the gamma corrected color: convert
-   `color.rgb` to sRGB first (copy the `srgb_gamma_correction` function from the `Engine` shaders), multiply, and
-   convert back with the inverse function
+   `color.rgb` to sRGB first, multiply, and convert back, using the `linear_to_srgb` and `srgb_to_linear` functions
+   that are already in the shader
    ```glsl
-   vec3 srgb_inverse_gamma_correction(vec3 color) {
-       color = clamp(color, 0.0, 1.0);
-       return mix(color / 12.92, pow((color + 0.055) / 1.055, vec3(2.4)), step(0.04045, color));
-   }
+   vec3 srgb = clamp(DEUTERANOPIA * linear_to_srgb(color.rgb), 0.0, 1.0);
+   imageStore(output_image, pixel, vec4(srgb_to_linear(srgb), color.a));
    ```
+   The `clamp` is needed here before the conversion, as `srgb_to_linear` raises its argument to a power, which is
+   undefined for negative values.
    The colors change noticeably: the red side becomes much darker and the green side more orange. A matrix is a
    linear operation, so it models the physics correctly only on values proportional to the light intensity. Then
    revert the change.
@@ -166,8 +166,8 @@ The attachments have the size of the window, so they must change together with i
 2. In `framebuffer_resize_callback`, after the check for the zero size, call `delete_framebuffer()` and
    `create_framebuffer(w, h)`. Resize the window and check that the image is not stretched or cut.
 
-3. Override the `cleanup` method and call `delete_framebuffer()` in it, before `Application::cleanup()`: OpenGL objects
-   must be deleted while the context still exists.
+3. In the `cleanup` method call `delete_framebuffer()`, before `Application::cleanup()`: OpenGL objects must be
+   deleted while the context still exists.
 
 ## Displaying the texture
 

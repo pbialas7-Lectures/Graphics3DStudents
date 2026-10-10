@@ -38,8 +38,8 @@ round the number of groups up, and the invocations that fall outside the image m
 ## The output texture
 
 The compute shader will read the original texture and write the result to a second texture. We cannot write the
-result back into the original texture, because it has the `GL_SRGB8` internal format, and sRGB formats cannot be used
-for writing from shaders.
+result back into the original texture, because it has an sRGB internal format (`GL_SRGB8`, or `GL_SRGB8_ALPHA8` for
+images with four channels), and sRGB formats cannot be used for writing from shaders.
 
 1. In the `init` method, after creating the original texture, create the output texture
    ```c++
@@ -49,26 +49,13 @@ for writing from shaders.
    OGL_CALL(glTextureParameteri(processed_tex_handle, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
    OGL_CALL(glTextureParameteri(processed_tex_handle, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
    ```
-   Here we use the _direct state access_ functions (`glCreate*`, `glTexture*`) that take the texture handle as an
-   argument, so we do not have to bind the texture, just as we did for the buffers with `glCreateBuffers` and
-   `glNamedBufferData`.
+   This is done in the same way as for the original texture, except that we do not load any data with
+   `glTextureSubImage2D`: the contents will be written by the compute shader.
 
-   OpenGL has two styles of creating and modifying objects. In the older _bind-to-edit_ style, used for the original
-   texture (`glGenTextures`, `glBindTexture`, `glTexImage2D`, `glTexParameteri`) and for the vertex array objects,
-   an object is first bound to a _target_ such as `GL_TEXTURE_2D`, and the following functions modify whatever object
-   is currently bound to that target. This makes it easy to change the wrong object by mistake, e.g. one that some
-   other code left bound. The _direct state access_ (DSA) functions, available since OpenGL 4.5, name the object
-   explicitly and do not depend on, or change, what is bound. Both styles create the same objects, so they can be
-   mixed freely, which is why you will see both in this course. For new code we prefer DSA: binding is then needed only
-   where an object is actually used, e.g. a texture bound to a texture unit for drawing.
-
-   The `glTextureStorage2D` function allocates _immutable_ storage: the size and format of the texture cannot be
-   changed later (its contents can). This is the recommended way to create textures that shaders write to: the size and
-   format cannot change while the texture is bound to an image unit, and a texture with all its levels allocated is
-   always complete. (Desktop
-   OpenGL also allows writing to textures created with `glTexImage2D`, but OpenGL ES requires immutable storage.) The
-   second argument is the number of mipmap levels; we do not use mipmaps, so it is one. Note that, in contrast to
-   `glTexImage2D`, we do not pass any data: the contents will be written by the compute shader.
+   Immutable storage, allocated by `glTextureStorage2D`, is the recommended way to create textures that shaders write
+   to: the size and format cannot change while the texture is bound to an image unit, and a texture with all its levels
+   allocated is always complete. (Desktop OpenGL also allows writing to textures created with `glTexImage2D`, but
+   OpenGL ES requires immutable storage.)
 
    We choose the `GL_RGBA16F` format (four 16-bit floating point channels) because the compute shader will write
    _linear_ color values. Storing linear values in 8 bits per channel would lose precision in dark colors, which you
@@ -106,7 +93,8 @@ for writing from shaders.
    space for us.
 
    The output is an _image_, not a sampler. Images are bound to _image units_, which are different from texture units,
-   so both can use binding zero. The `rgba16f` qualifier must match the format of the texture. The `imageStore`
+   so both can use binding zero. The `rgba16f` qualifier must match the format given when binding the texture to the
+   image unit (see below), which in turn must be compatible with the format of the texture. The `imageStore`
    function writes the value to the given pixel; no conversion is done, so we write linear values.
 
    The `layout(binding = ...)` qualifier assigns the units directly in the shader, so we do not need the
@@ -153,7 +141,8 @@ for writing from shaders.
    after the `glDispatchCompute` call. Without it the program may still work on your computer, which is what makes
    such errors hard to find.
 
-3. Finally, pass `processed_tex_handle` instead of `tex_handle` to the `KdMaterial` constructor. You should see the
+3. Finally, pass `processed_tex_handle` instead of `tex_handle` to the `KdMaterial` constructor, and store it in the
+   `texture_` field, so that `cleanup` deletes it instead of the original texture. You should see the
    same pyramid as at the end of the previous assignment. If it is black, check that every OpenGL call is wrapped in
    `OGL_CALL`, that the formats in the shader, `glTextureStorage2D` and `glBindImageTexture` agree, and that the units
    passed to `glBindTextureUnit` and `glBindImageTexture` are the same as the `binding` values in the shader. OpenGL

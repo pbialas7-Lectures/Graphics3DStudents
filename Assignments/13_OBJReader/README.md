@@ -22,10 +22,10 @@ that releases it in its destructor. The `Application/gl_handle.h` header provide
 the matching `glDelete*` function when it is destroyed:
 
 ```c++
-xe::gl::Texture texture;                                  // empty, holds no object
-OGL_CALL(glGenTextures(1, texture.put()));                // put() gives a GLuint* to store the new name in
-OGL_CALL(glBindTexture(GL_TEXTURE_2D, texture.get()));    // get() returns the name
-if (texture) { ... }                                      // true if it holds an object
+xe::gl::Texture texture;                                      // empty, holds no object
+OGL_CALL(glCreateTextures(GL_TEXTURE_2D, 1, texture.put()));  // put() gives a GLuint* to store the new name in
+OGL_CALL(glBindTextureUnit(0, texture.get()));                // get() returns the name
+if (texture) { ... }                                          // true if it holds an object
 ```
 
 A handle cannot be copied, as then two owners would delete the same object. It can only be _moved_, which transfers
@@ -79,17 +79,22 @@ when the context no longer exists, so do not store a `gl::` handle in one.
    ```
 
 2. Add the definition of this function in the `texture.cpp` file. This function should take the name of the texture file
-   and return a `gl::Texture` owning the new texture: create it with `glGenTextures(1, texture.put())` and end with
-   `return texture;`.
+   and return a `gl::Texture` owning the new texture: create it with `glCreateTextures(GL_TEXTURE_2D, 1,
+   texture.put())` and end with `return texture;`.
 
    Use the code creating the texture that was previously in the `app.cpp` file; `texture.cpp` has to include the
-   `stb/stb_image.h` header.
+   `stb/stb_image.h`, `spdlog/spdlog.h` and `Application/utils.h` (for `OGL_CALL`) headers.
 
    As before, choose the formats depending on the number of channels of the image: the format of the data is
    `GL_RGB` for three and `GL_RGBA` for four channels. If `is_sRGB` is `true`, the internal format should be
    `GL_SRGB8` or `GL_SRGB8_ALPHA8`, otherwise `GL_RGB8` or `GL_RGBA8`.
 
    Remember to free the image with `stbi_image_free` after loading it into the texture.
+
+   The function will load any image, so the rows of the data need not start at multiples of four bytes. Set
+   `GL_UNPACK_ALIGNMENT` to 1 before `glTextureSubImage2D`. This setting is global, not a property of the texture,
+   so read the previous value with `glGetIntegerv(GL_UNPACK_ALIGNMENT, ...)` before and restore it afterwards, so
+   that the function does not change the state for the rest of the program.
 
    The `Engine` library collects its source files using `file(GLOB ...)`, so after creating `texture.cpp` you have to
    re-run CMake, as you did after creating `KdMaterial.cpp`.
@@ -100,20 +105,35 @@ when the context no longer exists, so do not store a `gl::` handle in one.
    instead of picking a few texels of the full texture. Without mipmaps such textures shimmer and show moiré patterns
    when the camera moves.
 
-   After `glTexImage2D` call `glGenerateMipmap(GL_TEXTURE_2D)`, which computes all the copies, and set
-   `GL_TEXTURE_MIN_FILTER` to `GL_LINEAR_MIPMAP_LINEAR`, which interpolates within and between the two nearest
-   copies. `GL_TEXTURE_MAG_FILTER` stays `GL_LINEAR`: mipmaps are only used when the texture is shrunk. To see the
-   difference, zoom out the Earth with and without the mipmaps.
+   Each copy is a separate mipmap level of the texture, and immutable storage must have all the levels allocated
+   up front: the second argument of `glTextureStorage2D` is their number. So far we have passed one, and with one
+   level there is no room for the copies. A full chain halves the larger dimension until it reaches one texel, so it
+   has
+   ```c++
+   GLsizei levels = 1 + static_cast<GLsizei>(std::floor(std::log2(std::max(width, height))));
+   ```
+   levels, e.g. 11 for a 1024x1024 image (include `<algorithm>` and `<cmath>`). Pass this number to
+   `glTextureStorage2D`; `glTextureSubImage2D` still loads the image into level zero.
 
-4. If the image cannot be loaded, do not exit the program as before, but print an error message and return an empty
-   handle, `return {};`. The callers can check for it with `if (texture)` (see the `create_from_mtl` code in the next
-   section).
+   After `glTextureSubImage2D` call `glGenerateTextureMipmap(texture.get())`, which computes the copies in all the
+   other levels, and set `GL_TEXTURE_MIN_FILTER` to `GL_LINEAR_MIPMAP_LINEAR`, which interpolates within and between
+   the two nearest copies. `GL_TEXTURE_MAG_FILTER` stays `GL_LINEAR`: mipmaps are only used when the texture is
+   shrunk. To see the difference, zoom out the pyramid with and without the mipmaps; it is even more visible on
+   the Earth, which you will load at the end of the next section.
+
+   If you forget to allocate the levels, `glGenerateTextureMipmap` has nothing to fill, and there are no mipmaps,
+   even though OpenGL does not report any error.
+
+4. If the image cannot be loaded, or it has neither three nor four channels, do not exit the program as before, but
+   print an error message and return an empty handle, `return {};`. In the second case free the image first. The
+   callers can check for it with `if (texture)` (see the `create_from_mtl` code in the next section).
 
 5. In the `app.cpp` file, use this newly defined function to load the texture. The `KdMaterial` constructor takes a
    plain `GLuint`, so pass it `texture.get()`; the material only uses the texture, it does not own it. The texture
-   must therefore be owned by something that lives as long as the material: keep it in a field
-   `xe::gl::Texture texture_;` of `SimpleShapeApplication`. If you kept it in a local variable of `init`, it would be
-   deleted at the end of `init`, and the material would bind a deleted texture: `glBindTexture` would report
+   must therefore be owned by something that lives as long as the material: change the type of the `texture_` field
+   of `SimpleShapeApplication` from `GLuint` to `xe::gl::Texture`, and remove the `glDeleteTextures` call from
+   `cleanup`, as the handle now deletes the texture itself. If you kept it in a local variable of `init`, it would be
+   deleted at the end of `init`, and the material would bind a deleted texture: `glBindTextureUnit` would report
    `GL_INVALID_OPERATION`, or, if the name was reused by a texture created later, the pyramid would show that texture.
 
 ## Materials from MTL files
@@ -195,7 +215,8 @@ when the context no longer exists, so do not store a `gl::` handle in one.
    The `load_mesh_from_obj` function is declared in `Engine/mesh_loader.h`, include it in `app.cpp`. It returns
    `nullptr` when the model cannot be read, e.g. because of a wrong path, hence the check.
    You should again see the textured pyramid. The texture is now loaded and owned by the material, so you can remove
-   the `texture_` field from `SimpleShapeApplication`.
+   the `texture_` field from `SimpleShapeApplication`, and the `cleanup` override, which now only calls
+   `Application::cleanup()`.
 
 4. Finally, load the `Models/blue_marble.obj` model instead of the pyramid.
    You should see the Earth model with the texture.

@@ -1,10 +1,14 @@
 # The metal plate material of square_textures.mtl with a normal map. The `bump` statement (also written `map_Bump`)
 # gives the bump texture, here a tangent-space normal map in the OpenGL convention (green channel pointing along +v).
+# The diffuse, ambient and specular colors are multiplied by the textures, the shininess Ns by the red channel
+# of map_Ns.
+# A painted, rusted plate is rough, so Ns is small, and it is not a metal, so it reflects only a few percent of the
+# light specularly (about 4%), hence Ks well below one: 0.22 in sRGB is 0.04 in linear space.
 newmtl MetalPlate
 Ka 1.0 1.0 1.0
 Kd 1.0 1.0 1.0
-Ks 1.0 1.0 1.0
-Ns 2000.0
+Ks 0.22 0.22 0.22
+Ns 100.0
 map_Kd metal_plate/textures/metal_plate_diff_1k.png
 map_Ka metal_plate/textures/metal_plate_diff_1k.png
 map_Ks metal_plate/textures/metal_plate_spec_1k.png

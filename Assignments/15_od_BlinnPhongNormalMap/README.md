@@ -18,15 +18,35 @@ bump metal_plate/textures/metal_plate_nor_gl_1k.png
 ```
 
 Despite the name of the statement, `metal_plate_nor_gl_1k.png` is not a bump (height) map but a _normal map_: each
-pixel stores a unit vector `n`, mapped from the range [-1,1] to the range [0,1] of the colors, i.e. as `(n+1)/2`. The
-vectors are given in the _tangent space_ of the surface, whose axes are
+pixel stores a unit vector `n`. Its components are in the range [-1,1], while the colors of a texture are in the
+range [0,1], so each component is mapped to a color component, `x` to red, `y` to green and `z` to blue, by
+
+```
+color = (n + 1) / 2
+```
+
+and the shader recovers the vector by the inverse mapping
+
+```
+n = 2 * color - 1
+```
+
+In an image with 8 bits per channel the stored values are `round(255 * (n + 1) / 2)`, but the sampler divides
+them by 255, so in the shader `color` is again in the range [0,1]. (`metal_plate_nor_gl_1k.png` has 16 bits per
+channel, but `stbi_load` converts it to 8.) The vectors are given in the _tangent space_ of
+the surface, whose axes are
 
 - the _tangent_ `T`, the direction in which the texture coordinate `u` grows,
 - the _bitangent_ `B`, the direction in which `v` grows,
 - the normal `N` of the surface.
 
 A normal map that does not change the normal stores (0,0,1) everywhere, i.e. the color (0.5,0.5,1). That is why
-normal maps look bluish. Storing the normals in the tangent space means that the same texture can be used whatever the
+normal maps look bluish, as does the normal map of the metal plate (reduced to 256x256 pixels):
+
+<p align="center"><img alt="Normal map of the metal plate" src="metal_plate_nor_gl.png" width="30%"></p>
+
+The flat parts of the plate are uniformly blue. On the slopes of the diamonds the normals tilt, which changes the red
+and green components. Storing the normals in the tangent space means that the same texture can be used whatever the
 orientation and the shape of the surface. The `_gl` suffix means that the map follows the OpenGL convention, in which
 the `y` (green) component points along `B`, the direction of growing `v`. In the DirectX convention it points the other
 way.
@@ -50,15 +70,16 @@ The bitangent is not stored, because it can be computed in this way.
 
 ## Material
 
-1. Add a `GLuint map_Bump_` field, initialized to zero, to the `BlinnPhongMaterial` class, and load it in the
+1. Add a `GLuint map_bump_` field, initialized to zero, to the `BlinnPhongMaterial` class, and load it in the
    `create_from_mtl` method from the `bump_texname` field of `mtl_material_t`. The normal map is not a color, so load
    it with `is_sRGB` set to `false`, and with three channels. Move it into `owned_textures_`, like the other textures
    loaded there, so that it is deleted together with the material.
 
-2. In the fragment shader add a sampler `uniform sampler2D map_Bump;` and connect it to texture unit 4, in the same way
-   as the other textures: get its location in `init`, and bind and unbind the texture in `bind` and `unbind`.
+2. In the fragment shader add a sampler `uniform sampler2D map_bump;` and connect it to texture unit 4, in the same way
+   as the other textures: keep its location in a static field `map_bump_location_`, set it in `init`, and bind and
+   unbind the texture in `bind` and `unbind`.
 
-3. Add a `bool use_map_Bump` field at the end of the `BlinnPhongMaterial` interface block, after `use_map_Ka`. It is at
+3. Add a `bool use_map_bump` field at the end of the `BlinnPhongMaterial` interface block, after `use_map_Ns`. It is at
    offset 76, so it still fits in the 80 bytes of the buffer. Set it in the `bind` method.
 
 ## Shaders
@@ -81,14 +102,14 @@ The bitangent is not stored, because it can be computed in this way.
    scales the model; only the vectors interpolated to the fragments are left unnormalized. Meshes without tangents
    (see below) get the zero vector, which cannot be normalized, hence the `if`. The `w` component is passed unchanged.
 
-2. In the fragment shader add the corresponding input variable `in vec4 vertex_tangent_vs;`. When `use_map_Bump` is
+2. In the fragment shader add the corresponding input variable `in vec4 vertex_tangent_vs;`. When `use_map_bump` is
    true, replace the normal with the one from the normal map, transformed from the tangent space to the view space:
    ```glsl
    vec3 normal = vertex_normal_vs;
-   if (use_map_Bump) {
+   if (use_map_bump) {
        vec3 tangent = vertex_tangent_vs.xyz;
        vec3 bitangent = vertex_tangent_vs.w * cross(normal, tangent);
-       vec3 n_ts = 2.0 * texture(map_Bump, vertex_texcoord_0).rgb - 1.0;
+       vec3 n_ts = 2.0 * texture(map_bump, vertex_texcoord_0).rgb - 1.0;
        normal = n_ts.x * tangent + n_ts.y * bitangent + n_ts.z * normal;
    }
    normal = normalize(normal);

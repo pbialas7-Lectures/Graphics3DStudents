@@ -64,22 +64,50 @@ To use it please include the `stb/stb_image.h` header file. The image can then b
    If everything is correct, you should see the info message. If loading fails, there is no point in continuing, so
    you may exit the program in the error branch.
 
-2. Create the texture using the `glGenTextures` function, storing its handle in a `GLuint tex_handle` variable, then
-   bind it using `glBindTexture` and load the image using `glTexImage2D` function. Set the
-   interpolation (filtering) methods that do not use mipmapping using the `glTexParameteri` function, e.g. set both
-   `GL_TEXTURE_MIN_FILTER` and `GL_TEXTURE_MAG_FILTER` to `GL_LINEAR`. This is necessary: the default value of
-   `GL_TEXTURE_MIN_FILTER` uses mipmaps, and as we do not create them, the texture would be incomplete and the sampler
-   would return black.
+2. Create the texture with the `glCreateTextures` function, storing its handle in a `GLuint tex_handle` variable,
+   allocate its storage with `glTextureStorage2D` and load the image into it with `glTextureSubImage2D`:
+   ```c++
+   GLuint tex_handle;
+   OGL_CALL(glCreateTextures(GL_TEXTURE_2D, 1, &tex_handle));
+   OGL_CALL(glTextureStorage2D(tex_handle, 1, internal_format, width, height));
+   OGL_CALL(glTextureSubImage2D(tex_handle, 0, 0, 0, width, height, format, GL_UNSIGNED_BYTE, img));
+   ```
+   These are the _direct state access_ (DSA) functions that take the texture handle as an argument, just as
+   `glCreateBuffers` and `glNamedBufferData` do for buffers. OpenGL has two styles of creating and modifying objects.
+   In the older _bind-to-edit_ style (`glGenTextures`, `glBindTexture`, `glTexImage2D`, `glTexParameteri`), which you
+   will find in many tutorials and which we use for the vertex array objects, an object is first bound to a _target_
+   such as `GL_TEXTURE_2D`, and the following functions modify whatever object is currently bound to that target. This
+   makes it easy to change the wrong object by mistake, e.g. one that some other code left bound. The DSA functions,
+   available since OpenGL 4.5, name the object explicitly and do not depend on, or change, what is bound. Both styles
+   create the same objects, so they can be mixed freely, which is why you will see both in this course. For new code
+   we prefer DSA: binding is then needed only where an object is actually used, e.g. a texture bound to a texture unit
+   for drawing.
 
-   The format of the image data passed to `glTexImage2D` must match the number of channels reported by `stbi_load`:
-   `GL_RGB` for three channels and `GL_RGBA` for four. The `multicolor.png` image has three channels, but other images
-   may have four. After the call to `glTexImage2D`, OpenGL has its own copy of the image, so free the memory allocated by
-   `stbi_load` using `stbi_image_free(img)`.
+   The `glTextureStorage2D` function allocates _immutable_ storage: the size and format of the texture cannot be
+   changed later (its contents can). Its second argument is the number of mipmap levels; we do not use mipmaps, so it
+   is one. The `internal_format` is the format in which OpenGL stores the texture. It has to be a _sized_ format, which
+   gives the number of bits per channel: use `GL_RGB8` for images with three channels and `GL_RGBA8` for four.
+
+   The `format` describes the image data passed to `glTextureSubImage2D` and must match the number of channels reported
+   by `stbi_load`: `GL_RGB` for three channels and `GL_RGBA` for four. The `multicolor.png` image has three channels,
+   but other images may have four. If the image has any other number of channels, print an error and exit. The
+   arguments `0, 0, 0` are the mipmap level and the position of the loaded rectangle in the texture; we fill the whole
+   level zero. After the call to `glTextureSubImage2D`, OpenGL has its own copy of the image, so free the memory
+   allocated by `stbi_load` using `stbi_image_free(img)`.
+
+   Set the interpolation (filtering) methods that do not use mipmapping using the `glTextureParameteri` function, e.g.
+   set both `GL_TEXTURE_MIN_FILTER` and `GL_TEXTURE_MAG_FILTER` to `GL_LINEAR`:
+   ```c++
+   OGL_CALL(glTextureParameteri(tex_handle, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+   ```
+   The default value of `GL_TEXTURE_MIN_FILTER` uses mipmaps. With immutable storage OpenGL uses only the levels we
+   have allocated, so the texture would still work, but it is better to be explicit. A texture created with
+   `glTexImage2D` without mipmaps would, with the default filter, be incomplete and the sampler would return black.
 
    By default OpenGL expects each row of the image data to start at an address that is a multiple of four bytes. This
    holds for `multicolor.png` (1024 pixels × 3 bytes), but if you use an image with three channels whose width is not
-   a multiple of four, call `glPixelStorei(GL_UNPACK_ALIGNMENT, 1)` before `glTexImage2D`, otherwise the texture will
-   be skewed.
+   a multiple of four, call `glPixelStorei(GL_UNPACK_ALIGNMENT, 1)` before `glTextureSubImage2D`, otherwise the
+   texture will be skewed.
 
 Now we have to modify the fragment shader to enable it to read the color from the texture. That requires a _sampler_ which
 is defined as a uniform variable
@@ -138,22 +166,39 @@ uniform sampler2D map_Kd;
    OGL_CALL(glUniform1i(map_Kd_location_, 0));
    ```
    (`glUniform1i` sets the uniform in the currently used program, so this has to come after the `glUseProgram` call),
-   set the active texture unit to zero using
-   the `glActiveTexture` function and bind `texture_` using the `glBindTexture` function.
+   and bind `texture_` to the texture unit zero
+   ```c++
+   OGL_CALL(glBindTextureUnit(0, texture_));
+   ```
    Samplers are initialized to texture unit zero, so it would work without the `glUniform1i` call, but it is better to
-   be explicit, as we will use more texture units later.
+   be explicit, as we will use more texture units later. The `glBindTextureUnit` function is the DSA replacement for
+   the bind-to-edit pair of `glActiveTexture(GL_TEXTURE0)`, which selects the active texture unit, and
+   `glBindTexture(GL_TEXTURE_2D, texture_)`, which binds the texture to the active unit. It takes the unit as an
+   argument and does not change the active unit.
 
    If `texture_` is equal to zero then just load zero into `use_map_Kd` field of the material uniform buffer.
 
    In the `unbind` method check if
-   the value of the `texture_` field is greater than zero and if so unbind the texture.
+   the value of the `texture_` field is greater than zero and if so unbind the texture by binding zero to the unit
+   ```c++
+   OGL_CALL(glBindTextureUnit(0, 0));
+   ```
 
-7. In the `init` method of the `SimpleShapeApplication` add a single submesh encompassing all the indices and add a
-   material with texture. Set the `Kd` to white.
+7. In the `init` method of the `SimpleShapeApplication` replace the five submeshes of the faces with a single
+   submesh encompassing all the indices, with a material with texture. Set the `Kd` to white.
    ```c++
    pyramid->add_submesh(0, indices.size(), new xe::KdMaterial({1.f, 1.f, 1.0f, 1.0f}, false, tex_handle));
    ```
-   The material does not take ownership of the texture, it only uses its handle.
+   The material does not take ownership of the texture, it only uses its handle, so the application has to delete
+   it. Keep the handle in a field `GLuint texture_ = 0u;` of `SimpleShapeApplication` and override the `cleanup`
+   method, which is called before the window and its OpenGL context are destroyed:
+   ```c++
+   void SimpleShapeApplication::cleanup() {
+       OGL_CALL(glDeleteTextures(1, &texture_));
+       Application::cleanup();
+   }
+   ```
+   Do not forget to call `Application::cleanup()`, which deletes the meshes and the materials.
 
 ## Gamma correction
 
@@ -162,8 +207,9 @@ At this moment, this is not a problem because we are not doing any calculations 
 the screen where it is expected to be in sRGB color space.
 
 1. But if we want to do any calculations on the color, we have to convert it to the linear color space. This can be done
-   automatically by OpenGL, by changing the internal format in the `glTexImage2D` call to `GL_SRGB8` (or
-   `GL_SRGB8_ALPHA8` for images with four channels; `GL_SRGB8` has no alpha channel). Please do it and
+   automatically by OpenGL, by changing the internal format in the `glTextureStorage2D` call from `GL_RGB8` to
+   `GL_SRGB8` (or from `GL_RGBA8` to `GL_SRGB8_ALPHA8` for images with four channels; `GL_SRGB8` has no alpha
+   channel). Please do it and
    notice that the colors have changed. This is because we are sending the linear values to the screen without any gamma
    correction.
    <p align="center"><img alt="linear RGB" src="linearRGB.png" width="50%"></p>
