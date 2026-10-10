@@ -1,11 +1,13 @@
 # The metal plate material of square_normal_map.mtl reflecting the environment. Illumination model 3 is the
 # Blinn-Phong model of illum 2 plus the mirror reflection of the environment, weighted by the specular color Ks
 # (here modulated by map_Ks). The environment cube map is not given here but set by the application.
+# As in square_textures.mtl, the painted plate is not a metal: Ks 0.22 in sRGB is 0.04 in linear space, so it
+# reflects only about 4% of the environment.
 newmtl MetalPlate
 Ka 1.0 1.0 1.0
 Kd 1.0 1.0 1.0
-Ks 1.0 1.0 1.0
-Ns 2000.0
+Ks 0.22 0.22 0.22
+Ns 100.0
 map_Kd metal_plate/textures/metal_plate_diff_1k.png
 map_Ka metal_plate/textures/metal_plate_diff_1k.png
 map_Ks metal_plate/textures/metal_plate_spec_1k.png
