@@ -182,6 +182,19 @@ namespace xe {
                     case 1:
                     case 2:
                     case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                        // illum 4 to 10 (written e.g. by Blender) add transparency and refraction to illum 2 and 3,
+                        // which we do not support. The material is better drawn without them than replaced by a
+                        // gray one.
+                        if (mat.illum > 3)
+                            spdlog::warn("Material {} uses illum {}, treated like illum 2: transparency and refraction "
+                                         "are ignored", mat.name, mat.illum);
                         // Lighting needs normals; without them the shaders would compute NaN.
                         if (smesh.has_normals) {
                             material = create_material("BlinnPhongMaterial", mat, mtl_dir);
@@ -194,7 +207,7 @@ namespace xe {
                         }
                         break;
                     default:
-                        spdlog::error("Unknown Illumimination model {}", mat.illum);
+                        spdlog::error("Unknown illumination model {}", mat.illum);
                         break;
                 }
             }

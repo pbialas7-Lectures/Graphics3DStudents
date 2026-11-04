@@ -206,8 +206,9 @@ when the context no longer exists, so do not store a `gl::` handle in one.
    factories to create the materials, so `KdMaterial::init()` has to be called __before__ loading any meshes.
 
    Which factory is used for a given material is decided by its `illum` statement in the MTL file, see
-   `Engine/mesh_loader.cpp`: `illum 0` selects `KdMaterial`. All the materials used by `pyramid.obj` and `blue_marble.obj`
-   use `illum 0`. If the factory selected by `illum` is not registered, or the `illum` value is unknown, an error is
+   `Engine/mesh_loader.cpp`: `illum 0` selects `KdMaterial`, and `illum 1` to `10` select `BlinnPhongMaterial`, which
+   you will write in a later assignment. All the materials used by `pyramid.obj` and `blue_marble.obj` use `illum 0`.
+   If the factory selected by `illum` is not registered, or the `illum` value is not between 0 and 10, an error is
    printed and the material is replaced by a gray `KdMaterial`, with a warning. Only when `KdMaterial` itself is not
    registered does the submesh get the `NullMaterial`, which draws it with whatever program and buffers the previously
    drawn material left bound.
