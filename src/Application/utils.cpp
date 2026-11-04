@@ -171,6 +171,8 @@ namespace xe {
                 return 0;
             }
             for (const auto &[shader_type, shader]: shaders) {
+                // Not wrapped in OGL_CALL on purpose: OGL_CALL would abort, and here the error is checked right away
+                // so that a failure makes create_program() clean up and return 0 instead.
                 glAttachShader(program, shader);
                 auto status = glGetError();
                 if (status != GL_NO_ERROR) {
