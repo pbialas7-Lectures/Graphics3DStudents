@@ -113,7 +113,8 @@ of two steps:
    the specified point `c`, not the origin. To achieve this, we translate the position by `-c`, moving point `c` to the
    origin, then we
    rotate the translated position around the origin and translate it back by `c`, moving point `c` back to its original
-   position.
+   position. The center the camera looks at is rotated in the same way, so that it stays in the middle of the view.
+   When `c` is the center itself, it does not move.
 
    ```c++
    void rotate_around_point(float angle, const glm::vec3 &axis, const glm::vec3 &c) {
@@ -125,6 +126,8 @@ of two steps:
        auto t = position_ - c;
        t = R * t;
        position_ = c + t;
+
+       center_ = c + R * (center_ - c);
    }
    ```
 
