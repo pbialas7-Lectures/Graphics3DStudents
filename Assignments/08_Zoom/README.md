@@ -102,8 +102,20 @@ Start by copying the `07_Resize` assignment to a new `08_Zoom` directory, as des
    camera()->look_at(glm::vec3(2.0f, 1.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
    ```
 
+   > **Warning:** the `up` vector must not be parallel to the viewing direction `eye - center`, for example looking
+   > straight down the z axis with `up` equal to `(0, 0, 1)`. The camera's x axis is computed as the cross product of
+   > `up` and the viewing direction, which is then the zero vector. Normalizing it gives `NaN`, and the `NaN` spreads
+   > to the whole view matrix: the screen stays empty and nothing reports an error. If the picture suddenly
+   > disappears after you change the camera position, check this first.
+
    In the `framebuffer_resize_callback` method use the `Camera::set_aspect` method to set the aspect ratio of the
    camera.
+
+   > **Warning:** keep the early return for a zero-sized framebuffer from the previous assignment *before* the call
+   > to `set_aspect`. When the window is minimized, `h` can be `0` and `w / h` is then not a valid aspect ratio.
+   > `glm::perspective` does not accept it (it can fail an assertion), and the `Camera` class does not check the
+   > value for you.
+
    In the `frame` method use the methods `Camera::view` and `Camera::projection` for V and P matrices respectively.
 
 4. Finally, remove unnecessary fields

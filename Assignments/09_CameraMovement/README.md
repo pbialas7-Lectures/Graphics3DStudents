@@ -247,7 +247,7 @@ To do this:
    CameraController *controller_;
    ```
 
-   and a method
+   and a method   
 
    ```c++
    void set_controller(CameraController *controller) { controller_ = controller; }
@@ -260,6 +260,11 @@ To do this:
    ```c++
    set_controller(new CameraController(camera()));
    ```
+
+   > **Warning:** the `CameraController` does not check whether it has a camera. The default constructor sets
+   > `camera_` to `nullptr`, and the first mouse drag after that would dereference it and crash the program. Always
+   > create the controller with the camera, as above (or call `set_camera` before any event can arrive), and create
+   > the camera first.
 
    The application owns the controller as well, so delete it in the destructor together with the camera:
    ```c++
