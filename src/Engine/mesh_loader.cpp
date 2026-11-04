@@ -175,6 +175,8 @@ namespace xe {
             if (sm.mat_idx >= 0) {
                 auto mat = smesh.materials[sm.mat_idx];
                 SPDLOG_DEBUG("Material illum {}", mat.illum);
+                // A material without an illum statement has illum 0 (tinyobjloader initializes it to 0), so it
+                // gets a KdMaterial.
                 switch (mat.illum) {
                     case 0:
                         material = create_material("KdMaterial", mat, mtl_dir);

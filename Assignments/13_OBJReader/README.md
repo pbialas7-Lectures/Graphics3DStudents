@@ -211,7 +211,8 @@ when the context no longer exists, so do not store a `gl::` handle in one.
 
    Which factory is used for a given material is decided by its `illum` statement in the MTL file, see
    `Engine/mesh_loader.cpp`: `illum 0` selects `KdMaterial`, and `illum 1` to `10` select `BlinnPhongMaterial`, which
-   you will write in a later assignment. All the materials used by `pyramid.obj` and `blue_marble.obj` use `illum 0`.
+   you will write in a later assignment. A material without an `illum` statement is treated as `illum 0`, so it also
+   gets a `KdMaterial`. All the materials used by `pyramid.obj` and `blue_marble.obj` use `illum 0`.
    If the factory selected by `illum` is not registered, or the `illum` value is not between 0 and 10, an error is
    printed and the material is replaced by a gray `KdMaterial`, with a warning. Only when `KdMaterial` itself is not
    registered does the submesh get the `NullMaterial`, which draws it with whatever program and buffers the previously
