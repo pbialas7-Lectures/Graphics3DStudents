@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 330" width="780" height="330" font-family="sans-serif" font-size="14">
+<style>
+.m{font-family:monospace;font-size:14px;fill:#111}
+.t{fill:#111}
+.h{font-weight:bold;fill:#111}
+.s{font-size:12px;fill:#444}
+</style>
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#333"/></marker></defs>
+<rect width="780" height="330" fill="#fff"/>
+<text x="120" y="28" text-anchor="middle" class="h">Attributes (location)</text>
+<text x="375" y="28" text-anchor="middle" class="h">Binding point</text>
+<text x="635" y="28" text-anchor="middle" class="h">Buffer</text>
+
+<rect x="20" y="60" width="200" height="76" rx="6" fill="#cfe2ff" stroke="#3b6fb6" stroke-width="1.5"/>
+<text x="32" y="82" class="t"><tspan font-weight="bold">0: position</tspan></text>
+<text x="32" y="102" class="s">3 × float, not normalized</text>
+<text x="32" y="122" class="s">relative offset +0 B</text>
+
+<rect x="20" y="160" width="200" height="76" rx="6" fill="#ffe0b3" stroke="#c77a10" stroke-width="1.5"/>
+<text x="32" y="182" class="t"><tspan font-weight="bold">1: color</tspan></text>
+<text x="32" y="202" class="s">3 × float, not normalized</text>
+<text x="32" y="222" class="s">relative offset +12 B</text>
+
+<rect x="290" y="90" width="170" height="116" rx="6" fill="#f2f2f2" stroke="#555" stroke-width="1.5"/>
+<text x="305" y="114" class="t"><tspan font-weight="bold">binding 0</tspan></text>
+<text x="305" y="138" class="s">buffer: vbo</text>
+<text x="305" y="158" class="s">offset: 0</text>
+<text x="305" y="178" class="s">stride: 24 B</text>
+<text x="305" y="198" class="s" font-style="italic">(one per binding)</text>
+
+<path d="M220,98 L288,130" stroke="#333" stroke-width="1.5" fill="none" marker-end="url(#a)"/>
+<path d="M220,198 L288,166" stroke="#333" stroke-width="1.5" fill="none" marker-end="url(#a)"/>
+<path d="M460,148 L526,148" stroke="#333" stroke-width="1.5" fill="none" marker-end="url(#a)"/>
+<text x="254" y="86" text-anchor="middle" class="s">AttribBinding</text>
+<text x="254" y="224" text-anchor="middle" class="s">AttribBinding</text>
+<text x="493" y="140" text-anchor="middle" class="s">VertexBuffer</text>
+
+<rect x="530" y="60" width="35" height="34" fill="#cfe2ff" stroke="#555"/><text x="547.5" y="82" text-anchor="middle" class="m">x</text><rect x="565" y="60" width="35" height="34" fill="#cfe2ff" stroke="#555"/><text x="582.5" y="82" text-anchor="middle" class="m">y</text><rect x="600" y="60" width="35" height="34" fill="#cfe2ff" stroke="#555"/><text x="617.5" y="82" text-anchor="middle" class="m">z</text><rect x="635" y="60" width="35" height="34" fill="#ffe0b3" stroke="#555"/><text x="652.5" y="82" text-anchor="middle" class="m">r</text><rect x="670" y="60" width="35" height="34" fill="#ffe0b3" stroke="#555"/><text x="687.5" y="82" text-anchor="middle" class="m">g</text><rect x="705" y="60" width="35" height="34" fill="#ffe0b3" stroke="#555"/><text x="722.5" y="82" text-anchor="middle" class="m">b</text><rect x="530" y="94" width="35" height="34" fill="#cfe2ff" stroke="#555"/><text x="547.5" y="116" text-anchor="middle" class="m">x</text><rect x="565" y="94" width="35" height="34" fill="#cfe2ff" stroke="#555"/><text x="582.5" y="116" text-anchor="middle" class="m">y</text><rect x="600" y="94" width="35" height="34" fill="#cfe2ff" stroke="#555"/><text x="617.5" y="116" text-anchor="middle" class="m">z</text><rect x="635" y="94" width="35" height="34" fill="#ffe0b3" stroke="#555"/><text x="652.5" y="116" text-anchor="middle" class="m">r</text><rect x="670" y="94" width="35" height="34" fill="#ffe0b3" stroke="#555"/><text x="687.5" y="116" text-anchor="middle" class="m">g</text><rect x="705" y="94" width="35" height="34" fill="#ffe0b3" stroke="#555"/><text x="722.5" y="116" text-anchor="middle" class="m">b</text><rect x="530" y="128" width="35" height="34" fill="#cfe2ff" stroke="#555"/><text x="547.5" y="150" text-anchor="middle" class="m">x</text><rect x="565" y="128" width="35" height="34" fill="#cfe2ff" stroke="#555"/><text x="582.5" y="150" text-anchor="middle" class="m">y</text><rect x="600" y="128" width="35" height="34" fill="#cfe2ff" stroke="#555"/><text x="617.5" y="150" text-anchor="middle" class="m">z</text><rect x="635" y="128" width="35" height="34" fill="#ffe0b3" stroke="#555"/><text x="652.5" y="150" text-anchor="middle" class="m">r</text><rect x="670" y="128" width="35" height="34" fill="#ffe0b3" stroke="#555"/><text x="687.5" y="150" text-anchor="middle" class="m">g</text><rect x="705" y="128" width="35" height="34" fill="#ffe0b3" stroke="#555"/><text x="722.5" y="150" text-anchor="middle" class="m">b</text>
+<text x="635" y="184" text-anchor="middle" class="m">⋮</text>
+<path d="M532,196 L532,204 L637,204 L637,196" stroke="#3b6fb6" stroke-width="1.5" fill="none"/>
+<path d="M637,196 L637,204 L740,204 L740,196" stroke="#c77a10" stroke-width="1.5" fill="none"/>
+<text x="585" y="222" text-anchor="middle" class="s">position</text>
+<text x="688" y="222" text-anchor="middle" class="s">color</text>
+<text x="635" y="258" text-anchor="middle" class="s">one vertex = stride = 24 B (interleaved)</text>
+
+<text x="20" y="300" class="s">Format (what an attribute looks like) is stored per attribute; source (buffer, offset, stride) per binding point.</text>
+</svg>

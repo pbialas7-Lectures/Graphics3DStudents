@@ -20,7 +20,8 @@ So far we have set up the vertex array object (VAO) by binding it and the vertex
 `glVertexAttribPointer`, which records the format of an attribute together with the buffer that is _currently bound_ to
 `GL_ARRAY_BUFFER`. We already create and fill the buffers with _direct state access_ (DSA) functions such as
 `glCreateBuffers` and `glNamedBufferData`, which take the name of the object they modify instead of relying on what is
-bound. We will now do the same for the VAO. The result on the screen should not change.
+bound. We will now do the same for the VAO. The result on the screen should not change. A longer explanation of what a
+VAO stores and how the DSA functions map to the classic ones is in [VAO_DSA.md](VAO_DSA.md).
 
 1. Replace `glGenVertexArrays` with `glCreateVertexArrays`. `glGenVertexArrays` only reserves a name; the object is
    created when it is first bound, and a DSA function called with a name that was never bound generates

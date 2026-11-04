@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 340" width="780" height="340" font-family="sans-serif" font-size="14">
+<style>
+.m{font-family:monospace;font-size:14px;fill:#111}
+.t{fill:#111}
+.h{font-weight:bold;fill:#111}
+.s{font-size:12px;fill:#444}
+</style>
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#333"/></marker></defs>
+<rect width="780" height="340" fill="#fff"/>
+<text x="120" y="28" text-anchor="middle" class="h">Attributes (location)</text>
+<text x="405" y="28" text-anchor="middle" class="h">Binding points</text>
+<text x="647.5" y="28" text-anchor="middle" class="h">Buffers</text>
+
+<rect x="20" y="60" width="200" height="76" rx="6" fill="#cfe2ff" stroke="#3b6fb6" stroke-width="1.5"/>
+<text x="32" y="82" class="t"><tspan font-weight="bold">0: position</tspan></text>
+<text x="32" y="102" class="s">3 × float, not normalized</text>
+<text x="32" y="122" class="s">relative offset +0 B</text>
+
+<rect x="20" y="190" width="200" height="76" rx="6" fill="#ffe0b3" stroke="#c77a10" stroke-width="1.5"/>
+<text x="32" y="212" class="t"><tspan font-weight="bold">1: color</tspan></text>
+<text x="32" y="232" class="s">3 × float, not normalized</text>
+<text x="32" y="252" class="s">relative offset +0 B</text>
+
+<rect x="320" y="48" width="170" height="100" rx="6" fill="#f2f2f2" stroke="#555" stroke-width="1.5"/>
+<text x="335" y="72" class="t"><tspan font-weight="bold">binding 0</tspan></text>
+<text x="335" y="96" class="s">buffer: positions_buffer</text>
+<text x="335" y="116" class="s">offset: 0</text>
+<text x="335" y="136" class="s">stride: 12 B</text>
+<rect x="320" y="178" width="170" height="100" rx="6" fill="#f2f2f2" stroke="#555" stroke-width="1.5"/>
+<text x="335" y="202" class="t"><tspan font-weight="bold">binding 1</tspan></text>
+<text x="335" y="226" class="s">buffer: colors_buffer</text>
+<text x="335" y="246" class="s">offset: 0</text>
+<text x="335" y="266" class="s">stride: 12 B</text>
+
+<path d="M220,98 L318,98" stroke="#333" stroke-width="1.5" fill="none" marker-end="url(#a)"/>
+<path d="M220,228 L318,228" stroke="#333" stroke-width="1.5" fill="none" marker-end="url(#a)"/>
+<path d="M490,98 L576,98" stroke="#333" stroke-width="1.5" fill="none" marker-end="url(#a)"/>
+<path d="M490,228 L576,228" stroke="#333" stroke-width="1.5" fill="none" marker-end="url(#a)"/>
+<text x="269" y="88" text-anchor="middle" class="s">AttribBinding</text>
+<text x="269" y="218" text-anchor="middle" class="s">AttribBinding</text>
+<text x="533" y="88" text-anchor="middle" class="s">VertexBuffer</text>
+<text x="533" y="218" text-anchor="middle" class="s">VertexBuffer</text>
+
+<rect x="580" y="50" width="45" height="30" fill="#cfe2ff" stroke="#555"/><text x="602.5" y="70" text-anchor="middle" class="m">x</text><rect x="625" y="50" width="45" height="30" fill="#cfe2ff" stroke="#555"/><text x="647.5" y="70" text-anchor="middle" class="m">y</text><rect x="670" y="50" width="45" height="30" fill="#cfe2ff" stroke="#555"/><text x="692.5" y="70" text-anchor="middle" class="m">z</text><rect x="580" y="80" width="45" height="30" fill="#cfe2ff" stroke="#555"/><text x="602.5" y="100" text-anchor="middle" class="m">x</text><rect x="625" y="80" width="45" height="30" fill="#cfe2ff" stroke="#555"/><text x="647.5" y="100" text-anchor="middle" class="m">y</text><rect x="670" y="80" width="45" height="30" fill="#cfe2ff" stroke="#555"/><text x="692.5" y="100" text-anchor="middle" class="m">z</text><rect x="580" y="110" width="45" height="30" fill="#cfe2ff" stroke="#555"/><text x="602.5" y="130" text-anchor="middle" class="m">x</text><rect x="625" y="110" width="45" height="30" fill="#cfe2ff" stroke="#555"/><text x="647.5" y="130" text-anchor="middle" class="m">y</text><rect x="670" y="110" width="45" height="30" fill="#cfe2ff" stroke="#555"/><text x="692.5" y="130" text-anchor="middle" class="m">z</text><text x="647.5" y="162" text-anchor="middle" class="m">⋮</text>
+<rect x="580" y="180" width="45" height="30" fill="#ffe0b3" stroke="#555"/><text x="602.5" y="200" text-anchor="middle" class="m">r</text><rect x="625" y="180" width="45" height="30" fill="#ffe0b3" stroke="#555"/><text x="647.5" y="200" text-anchor="middle" class="m">g</text><rect x="670" y="180" width="45" height="30" fill="#ffe0b3" stroke="#555"/><text x="692.5" y="200" text-anchor="middle" class="m">b</text><rect x="580" y="210" width="45" height="30" fill="#ffe0b3" stroke="#555"/><text x="602.5" y="230" text-anchor="middle" class="m">r</text><rect x="625" y="210" width="45" height="30" fill="#ffe0b3" stroke="#555"/><text x="647.5" y="230" text-anchor="middle" class="m">g</text><rect x="670" y="210" width="45" height="30" fill="#ffe0b3" stroke="#555"/><text x="692.5" y="230" text-anchor="middle" class="m">b</text><rect x="580" y="240" width="45" height="30" fill="#ffe0b3" stroke="#555"/><text x="602.5" y="260" text-anchor="middle" class="m">r</text><rect x="625" y="240" width="45" height="30" fill="#ffe0b3" stroke="#555"/><text x="647.5" y="260" text-anchor="middle" class="m">g</text><rect x="670" y="240" width="45" height="30" fill="#ffe0b3" stroke="#555"/><text x="692.5" y="260" text-anchor="middle" class="m">b</text><text x="647.5" y="292" text-anchor="middle" class="m">⋮</text>
+<text x="647.5" y="320" text-anchor="middle" class="s">both buffers: one vertex = 3 floats = 12 B</text>
+<text x="20" y="320" class="s">Only the VertexBuffer calls and offsets differ from the interleaved case.</text>
+</svg>
