@@ -228,8 +228,9 @@ reflected from other objects in the scene.
 ### Point light source
 
 The point light source is the simplest light source. It is defined by its position, color, intensity and radius. In
-the `Engine` directory you will find the `light.h` header file with the definition of class `PointLight`. The `alignas`
-qualifiers make sure that this class conforms to `std140` and can be directly copied to light uniform buffer.
+the `Engine` directory you will find the `light.h` header file with the definition of the `PointLight` structure.
+The `alignas` qualifiers make sure that this structure conforms to `std140` and can be directly copied to light
+uniform buffer.
 
 1. Please add the corresponding structure in the fragment shader
    ```glsl
