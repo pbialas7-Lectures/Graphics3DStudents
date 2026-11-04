@@ -94,6 +94,13 @@ To use it please include the `stb/stb_image.h` header file. The image can then b
    level zero. After the call to `glTextureSubImage2D`, OpenGL has its own copy of the image, so free the memory
    allocated by `stbi_load` using `stbi_image_free(img)`.
 
+   > **Note:** OpenGL assumes that every row of the data passed to `glTextureSubImage2D` starts at a multiple of
+   > `GL_UNPACK_ALIGNMENT` bytes, which is 4 by default, while `stbi_load` returns the rows with no padding. For an RGB
+   > image whose rows (`3 * width` bytes) are not a multiple of 4 bytes long, the picture would come out sheared.
+   > `multicolor.png` is 1024 pixels wide, so it is not affected, but if you try another image and see this, call
+   > `glPixelStorei(GL_UNPACK_ALIGNMENT, 1)` before `glTextureSubImage2D`. We will do it properly in
+   > [`13_OBJReader`](../13_OBJReader/README.md).
+
    Set the interpolation (filtering) methods that do not use mipmapping using the `glTextureParameteri` function, e.g.
    set both `GL_TEXTURE_MIN_FILTER` and `GL_TEXTURE_MAG_FILTER` to `GL_LINEAR`:
    ```c++
