@@ -16,7 +16,7 @@ Start by copying the `13_OBJReader` assignment to a new `15_oa_BlinnPhongDiffuse
    camera. Please disable the back-face culling, as the square is not a closed object.
 2. Set the camera in position (0, 0, 3) with fov 45 degrees and look down at the origin. Set the up vector to (0, 1, 0).
    You should see something like this:
-   <p align="center"><img alt="square" src="square.png"></p>
+   <p align="center"><img alt="square" src="square.png" width="50%"></p>
 
 ## Blinn-Phong material
 
@@ -109,7 +109,7 @@ we must pass it to the fragment shader.
    vFragColor.rgb = abs(vertex_position_vs);
    ```
    You should see something like this:
-   <p align="center"><img alt="vertex positions" src="positions.png"></p>
+   <p align="center"><img alt="vertex positions" src="positions.png" width="50%"></p>
 
    The color should not change when you rotate the camera.
 

@@ -432,7 +432,9 @@ void xe::Application::glfw_key_callback(GLFWwindow *window, int key, int scancod
         return;
     }
 
-    // Built-in shortcuts: Ctrl-Q quits, Ctrl-S saves a screenshot, Ctrl-F triggers a RenderDoc capture.
+    // Built-in shortcuts: Ctrl-Q quits, Ctrl-S saves a screenshot, Ctrl-F triggers a RenderDoc capture. They are
+    // global on purpose: they are checked before WantCaptureKeyboard, so they work even when ImGui has the keyboard
+    // focus.
     if ((mods & GLFW_MOD_CONTROL) != 0 && action == GLFW_PRESS) {
         switch (key) {
             case GLFW_KEY_Q:

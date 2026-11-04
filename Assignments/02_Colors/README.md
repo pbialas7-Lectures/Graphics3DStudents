@@ -43,4 +43,4 @@
 8. Color the roof of the house red (1,0,0) and the wall green (0,1,0) and submit the final version to the repository.
    The final result should look like this:
 
-   ![colors](colors.png)
+   <p align="center"><img alt="colors" src="colors.png" width="50%"></p>

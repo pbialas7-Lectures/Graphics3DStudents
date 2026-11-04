@@ -94,6 +94,24 @@ namespace {
             return 1;
         }
 
+        // tinyobj only warns about face indices that are out of range, and get_face does not check them, so a bad
+        // index would read past the end of the attribute arrays.
+        const auto n_positions = static_cast<int>(attrib.vertices.size() / 3);
+        const auto n_texcoords = static_cast<int>(attrib.texcoords.size() / 2);
+        const auto n_normals = static_cast<int>(attrib.normals.size() / 3);
+        for (const auto &sh: shapes) {
+            for (size_t i = 0; i < sh.mesh.indices.size(); ++i) {
+                const auto &idx = sh.mesh.indices[i];
+                if (idx.vertex_index < 0 || idx.vertex_index >= n_positions ||
+                    idx.texcoord_index >= n_texcoords || idx.normal_index >= n_normals) {
+                    SPDLOG_ERROR("Shape `{}', face {}: index out of range (v {}/{}, vt {}/{}, vn {}/{}, 1-based/count)",
+                                 sh.name, i / 3 + 1, idx.vertex_index + 1, n_positions, idx.texcoord_index + 1,
+                                 n_texcoords, idx.normal_index + 1, n_normals);
+                    return 1;
+                }
+            }
+        }
+
         mesh.has_normals = !attrib.normals.empty();
         mesh.has_texcoords[0] = !attrib.texcoords.empty();
 

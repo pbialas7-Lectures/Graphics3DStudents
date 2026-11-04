@@ -32,20 +32,31 @@ VAO stores and how the DSA functions map to the classic ones is in [VAO_DSA.md](
    binding, so it is given only once, here. Attach the index buffer with `glVertexArrayElementBuffer`.
 
 3. For each attribute, enable it with `glEnableVertexArrayAttrib`, describe its format with `glVertexArrayAttribFormat`
-   and connect it to the binding point with `glVertexArrayAttribBinding`. For the position this is
+   and connect it to the binding point with `glVertexArrayAttribBinding`. Attribute locations and binding points are
+   both small integers, and `glVertexArrayAttribBinding` takes one of each, so give them names at the top of `app.cpp`
+   instead of writing bare numbers:
    ```c++
-   OGL_CALL(glEnableVertexArrayAttrib(vao_, 0));
-   OGL_CALL(glVertexArrayAttribFormat(vao_, 0, 3, GL_FLOAT, GL_FALSE, 0));
-   OGL_CALL(glVertexArrayAttribBinding(vao_, 0, 0));
+   // Attribute locations, they must match the layout(location = ...) qualifiers in shaders/base_vs.glsl.
+   constexpr GLuint POSITION_LOCATION = 0;
+   constexpr GLuint COLOR_LOCATION = 1;
+   // The vertex buffer binding point both attributes read from.
+   constexpr GLuint VERTEX_BUFFER_BINDING = 0;
+   ```
+   Use `VERTEX_BUFFER_BINDING` also in the `glVertexArrayVertexBuffer` call from the previous step. For the position
+   attribute the calls are
+   ```c++
+   OGL_CALL(glEnableVertexArrayAttrib(vao_, POSITION_LOCATION));
+   OGL_CALL(glVertexArrayAttribFormat(vao_, POSITION_LOCATION, 3, GL_FLOAT, GL_FALSE, 0));
+   OGL_CALL(glVertexArrayAttribBinding(vao_, POSITION_LOCATION, VERTEX_BUFFER_BINDING));
    ```
    The last argument of `glVertexArrayAttribFormat` is the offset of the attribute _relative_ to the start of the
-   vertex, a plain number, not a pointer. Do the same for the color attribute.
+   vertex, a plain number, not a pointer. Do the same for the color attribute, using `COLOR_LOCATION`.
 
    Neither of the two mistakes below generates an OpenGL error, so check them carefully if nothing is drawn or the
    colors are wrong:
     - A disabled attribute is not read from the buffer; the shader gets the constant value (0,0,0,1) instead.
-    - By default, attribute `i` reads from binding point `i`, so the color attribute has to be connected to binding
-      point `0` explicitly.
+    - By default, attribute `i` reads from binding point `i`, so the color attribute has to be connected to
+      `VERTEX_BUFFER_BINDING` explicitly.
 
 4. Remove the `glBindVertexArray`, `glBindBuffer`, `glEnableVertexAttribArray` and `glVertexAttribPointer` calls from
    `init`. `glEnableVertexAttribArray` is replaced by `glEnableVertexArrayAttrib`; left in, it would act on whatever

@@ -42,4 +42,4 @@ Start by copying the `02_Colors` assignment to a new `03_Indices` directory, as 
    buffer. This is the final version that you should submit to your repository. It should look exactly like the
    result of the previous assignment:
 
-   ![colors](../02_Colors/colors.png)
+   <p align="center"><img alt="colors" src="../02_Colors/colors.png" width="50%"></p>
