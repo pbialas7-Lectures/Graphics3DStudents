@@ -159,7 +159,7 @@ when the context no longer exists, so do not store a `gl::` handle in one.
        SPDLOG_DEBUG("Adding KdMaterial {}", glm::to_string(color));
        auto material = new xe::KdMaterial(color);
        if (!mat.diffuse_texname.empty()) {
-           auto texture = xe::create_texture(mtl_dir + "/" + mat.diffuse_texname, true);
+           auto texture = xe::create_texture(xe::texture_path(mtl_dir, mat.diffuse_texname), true);
            SPDLOG_DEBUG("Adding Texture {} {:1d}", mat.diffuse_texname, texture.get());
            if (texture) {
                material->set_texture(texture.get());
@@ -170,9 +170,15 @@ when the context no longer exists, so do not store a `gl::` handle in one.
        return material;
    }
    ```
-   The `get_color` and `srgb_inverse_gamma_correction` functions are declared in `Engine/utils.h` and `create_texture`
-   in `Engine/texture.h`, so include both headers in `KdMaterial.cpp`.
+   The `get_color`, `srgb_inverse_gamma_correction` and `texture_path` functions are declared in `Engine/utils.h` and
+   `create_texture` in `Engine/texture.h`, so include both headers in `KdMaterial.cpp`.
    `glm::to_string` requires defining `GLM_ENABLE_EXPERIMENTAL` before including the `glm/gtx/string_cast.hpp` header.
+
+   The name of a texture in the MTL file is given relative to the directory of that file, so the path has to be put
+   together with `mtl_dir`. Do not do it by concatenating strings (`mtl_dir + "/" + name`): `texture_path` also copes
+   with names that use backslashes, as MTL files written on Windows do, and with absolute paths, including paths from
+   the machine on which the model was exported. If the file is not found at such a path, it looks for the file name
+   alone in the directory of the MTL file.
 
    A texture passed to the constructor or to `set_texture` belongs to the caller, as the texture of the pyramid
    belongs to `SimpleShapeApplication`. But the texture created here has no other owner: only the material knows

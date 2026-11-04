@@ -3,6 +3,9 @@
 //
 #include "Engine/utils.h"
 
+#include <algorithm>
+#include <filesystem>
+
 #include "glm/glm.hpp"
 
 #include "Application/utils.h"
@@ -23,6 +26,26 @@ namespace xe {
             color[i] = c[i];
         color[3] = 1.0;
         return color;
+    }
+
+    std::string texture_path(const std::string &mtl_dir, const std::string &name) {
+        namespace fs = std::filesystem;
+
+        std::string normalized = name;
+        std::replace(normalized.begin(), normalized.end(), '\\', '/');
+        const fs::path texture(normalized);
+
+        // For an absolute texture the / operator gives the texture itself.
+        const fs::path path = fs::path(mtl_dir) / texture;
+        std::error_code error;
+        if (fs::exists(path, error))
+            return path.string();
+
+        const fs::path in_mtl_dir = fs::path(mtl_dir) / texture.filename();
+        if (fs::exists(in_mtl_dir, error))
+            return in_mtl_dir.string();
+
+        return path.string();
     }
 
     glm::vec3 srgb_inverse_gamma_correction(glm::vec3 color) {

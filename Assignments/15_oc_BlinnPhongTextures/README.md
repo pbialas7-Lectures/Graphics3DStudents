@@ -82,7 +82,8 @@ channel, so it is converted automatically.
    `BlinnPhongMaterial` got when it was copied from `KdMaterial`, to `map_Kd_` and `set_map_Kd`, as in the reference
    solution; then update the `set_texture` call in `create_from_mtl` too.
 
-2. In the `create_from_mtl` method load the textures, in the same way as the diffuse texture. In the
+2. In the `create_from_mtl` method load the textures, in the same way as the diffuse texture (with the path
+   given by `texture_path`, not by concatenating strings). In the
    `mtl_material_t` structure their names are `ambient_texname`, `specular_texname` and `specular_highlight_texname`
    (`map_Ns` is called the _specular highlight_ map). Load all three with four channels, and change the loading of
    the diffuse texture to four channels too, so that a grayscale image can be used for any of them.

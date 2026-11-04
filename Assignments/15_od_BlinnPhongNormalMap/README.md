@@ -72,7 +72,8 @@ The bitangent is not stored, because it can be computed in this way.
 
 1. Add a `GLuint map_bump_` field, initialized to zero, to the `BlinnPhongMaterial` class, and load it in the
    `create_from_mtl` method from the `bump_texname` field of `mtl_material_t`. The normal map is not a color, so load
-   it with `is_sRGB` set to `false`, and with three channels. Move it into `owned_textures_`, like the other textures
+   it with `is_sRGB` set to `false`, and with three channels, using `texture_path` for the path as for the other
+   textures. Move it into `owned_textures_`, like the other textures
    loaded there, so that it is deleted together with the material.
 
 2. In the fragment shader add a sampler `uniform sampler2D map_bump;` and connect it to texture unit 4, in the same way
