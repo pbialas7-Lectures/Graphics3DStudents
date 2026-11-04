@@ -28,8 +28,6 @@ namespace xe {
 
         static void create_program(const utils::shader_path_map_t &shader_paths);
 
-        static void create_program_in_project(const utils::shader_path_map_t &shader_paths);
-
         static void create_program_in_engine(const utils::shader_path_map_t &shader_paths);
 
     private:
@@ -77,16 +75,6 @@ namespace xe {
             gl::delete_buffer(std::exchange(material_uniform_buffer_, 0u)); // init() called again
         OGL_CALL(glCreateBuffers(1, &material_uniform_buffer_));
         OGL_CALL(glNamedBufferData(material_uniform_buffer_, size, nullptr, GL_STATIC_DRAW));
-    }
-
-    template<class D>
-    void xe::AbstractMaterial<D>::create_program_in_project(const utils::shader_path_map_t &shader_paths) {
-        utils::shader_path_map_t shader_paths_in_project;
-        for (std::pair<GLenum, std::string> shader_path: shader_paths) {
-            shader_paths_in_project[shader_path.first] =
-                    std::string(PROJECT_DIR) + "/shaders/" + shader_path.second;
-        }
-        create_program(shader_paths_in_project);
     }
 
     template<class D>
