@@ -291,8 +291,11 @@ void xe::Application::run_cli(int argc, char **argv) {
         vc.push_back(argv[i]);
     }
 
+    // Like the argv of main(), the array ends with a null pointer that is not counted in argc.
+    vc.push_back(nullptr);
+
     startup(verbose);
-    init_cli(vc.size(), vc.data());
+    init_cli(static_cast<int>(vc.size()) - 1, vc.data());
     init();
     loop();
     shutdown();

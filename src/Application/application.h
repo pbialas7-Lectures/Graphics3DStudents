@@ -114,7 +114,7 @@ namespace xe {
 
         /**
          * @brief Called by run_cli() before init() with the command line arguments not used by run_cli().
-         * argv[0] is the program name.
+         * argv[0] is the program name, and as in main(), argv[argc] is a null pointer.
          */
         virtual void init_cli(int argc, char **argv) {}
 
