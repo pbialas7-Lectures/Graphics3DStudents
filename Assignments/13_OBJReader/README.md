@@ -197,6 +197,10 @@ when the context no longer exists, so do not store a `gl::` handle in one.
    as linear values. Our `blue_marble.mtl` was exported from Blender, but its `Kd` color is white, which is the same
    in both spaces.
 
+   The texture is multiplied by the `Kd` color. When an MTL file has no `Kd` line, the reader sets `Kd` to black, so a
+   textured material without it would be drawn black. All the MTL files of this course give `Kd 1.0 1.0 1.0` together
+   with their textures. If a model of your own comes out black, check this and add the line by hand.
+
    In the `KdMaterial::init` function add the following code (the `add_mat_function` function is declared in
    `Engine/mesh_loader.h`, so include it in `KdMaterial.cpp`):
    ```c++
