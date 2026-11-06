@@ -156,8 +156,9 @@ each pixel.
 
 2. In `init` create the program with `xe::utils::create_program` and an empty vertex array object. The triangle has no
    vertex attributes, but drawing still requires a bound VAO. Keep the program and the VAO in `gl::Program` and
-   `gl::VertexArray` fields, and reset them, together with the cube map, in an overridden `cleanup` method, before
-   calling `Application::cleanup()`: they must be deleted while the OpenGL context still exists.
+   `gl::VertexArray` fields of `SimpleShapeApplication`. Like the cube map, they are then deleted automatically when
+   the application is destroyed, before the OpenGL context (see [`13_OBJReader`](../13_OBJReader/README.md)), so no
+   `cleanup` override is needed.
 
 3. At the end of `frame`, after the meshes, draw the skybox:
 

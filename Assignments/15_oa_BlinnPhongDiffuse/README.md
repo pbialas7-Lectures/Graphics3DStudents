@@ -57,7 +57,7 @@ In this assignment we will only use the first two terms of the equation, the amb
    xe::add_mat_function("BlinnPhongMaterial", BlinnPhongMaterial::create_from_mtl);
    ```
    If you have replaced every occurrence of `KdMaterial` in step 1, including the one in the string, this line is
-   already there. The OBJ loader uses this factory for materials with `illum 1`, `illum 2` or `illum 3`, provided the
+   already there. The OBJ loader uses this factory for materials with `illum 1` to `illum 10`, provided the
    mesh has normal vectors.
 
 6. In the `BlinnPhongMaterial` interface block in the `BlinnPhong` fragment shader add a `vec4 Ka` field at the

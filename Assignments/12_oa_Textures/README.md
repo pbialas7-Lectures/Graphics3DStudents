@@ -98,7 +98,8 @@ To use it please include the `stb/stb_image.h` header file. The image can then b
    > `GL_UNPACK_ALIGNMENT` bytes, which is 4 by default, while `stbi_load` returns the rows with no padding. For an RGB
    > image whose rows (`3 * width` bytes) are not a multiple of 4 bytes long, the picture would come out sheared.
    > `multicolor.png` is 1024 pixels wide, so it is not affected, but if you try another image and see this, call
-   > `glPixelStorei(GL_UNPACK_ALIGNMENT, 1)` before `glTextureSubImage2D`. We will do it properly in
+   > `glPixelStorei(GL_UNPACK_ALIGNMENT, 1)` before `glTextureSubImage2D`. This setting is global, so read the previous
+   > value with `glGetIntegerv(GL_UNPACK_ALIGNMENT, ...)` first and restore it afterwards, see
    > [`13_OBJReader`](../13_OBJReader/README.md).
 
    Set the interpolation (filtering) methods that do not use mipmapping using the `glTextureParameteri` function, e.g.
@@ -109,11 +110,6 @@ To use it please include the `stb/stb_image.h` header file. The image can then b
    The default value of `GL_TEXTURE_MIN_FILTER` uses mipmaps. With immutable storage OpenGL uses only the levels we
    have allocated, so the texture would still work, but it is better to be explicit. A texture created with
    `glTexImage2D` without mipmaps would, with the default filter, be incomplete and the sampler would return black.
-
-   By default OpenGL expects each row of the image data to start at an address that is a multiple of four bytes. This
-   holds for `multicolor.png` (1024 pixels × 3 bytes), but if you use an image with three channels whose width is not
-   a multiple of four, call `glPixelStorei(GL_UNPACK_ALIGNMENT, 1)` before `glTextureSubImage2D`, otherwise the
-   texture will be skewed.
 
 Now we have to modify the fragment shader to enable it to read the color from the texture. That requires a _sampler_ which
 is defined as a uniform variable
@@ -199,10 +195,12 @@ uniform sampler2D map_Kd;
    it. Keep the handle in a field `GLuint texture_ = 0u;` of `SimpleShapeApplication`, i.e. assign
    `texture_ = tex_handle;` in `init`; otherwise `cleanup` deletes texture zero and the real texture is never deleted.
    Then declare `void cleanup() override;` in `app.h` and define the `cleanup` method, which is called before the
-   window and its OpenGL context are destroyed:
+   window and its OpenGL context are destroyed. Delete there also the transformations uniform buffer, which was not
+   deleted so far:
    ```c++
    void SimpleShapeApplication::cleanup() {
        OGL_CALL(glDeleteTextures(1, &texture_));
+       OGL_CALL(glDeleteBuffers(1, &u_trans_buffer_handle_));
        Application::cleanup();
    }
    ```

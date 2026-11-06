@@ -75,8 +75,9 @@ buffer with the given stride to the binding point `0`, and all the attributes ar
    }
    ```
 2. In the vertex shader change the location of the `a_vertex_color` to five (5). Change the corresponding attribute
-   index in the calls to `glEnableVertexArrayAttrib`, `glVertexArrayAttribFormat` and `glVertexArrayAttribBinding` (but
-   not the binding point, which stays `0`). Check that the pyramid still has its colors before going further.
+   index, i.e. the value of the `COLOR_LOCATION` constant used in the calls to `glEnableVertexArrayAttrib`,
+   `glVertexArrayAttribFormat` and `glVertexArrayAttribBinding` (but not the binding point, `VERTEX_BUFFER_BINDING`,
+   which stays `0`). Check that the pyramid still has its colors before going further.
 
 3. Next we have to create the mesh for our pyramid in the `init` method. So start with creating a new `Mesh`
    ```c++
@@ -126,4 +127,5 @@ buffer with the given stride to the binding point `0`, and all the attributes ar
    Remove the bind and unbind `vao_` calls from this method.
 
 8. Please delete all unnecessary code: the creation of the vertex and index buffers and of the vertex array object in
-   the `init` method, and the `vao_` field.
+   the `init` method, the `POSITION_LOCATION`, `COLOR_LOCATION` and `VERTEX_BUFFER_BINDING` constants, and the `vao_`
+   field.

@@ -58,7 +58,8 @@ when the context no longer exists, so do not store a `gl::` handle in one.
 1. Start with the transformations uniform buffer: change the type of the `u_trans_buffer_handle_` field in `app.h`
    from `GLuint` to `xe::gl::Buffer` (include `Application/gl_handle.h`). Create the buffer with
    `glCreateBuffers(1, u_trans_buffer_handle_.put())` and use `u_trans_buffer_handle_.get()` wherever the name is
-   passed to OpenGL. The buffer, which was never deleted so far, is now deleted automatically.
+   passed to OpenGL. The buffer is now deleted automatically, so remove the `glDeleteBuffers` call from `cleanup`
+   (it would not compile anyway, the handle is not a `GLuint`).
 
 ## Loading textures
 
