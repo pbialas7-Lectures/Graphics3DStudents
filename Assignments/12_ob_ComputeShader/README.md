@@ -155,8 +155,14 @@ images with four channels), and sRGB formats cannot be used for writing from sha
    too dark, as at the beginning of the gamma correction section of the previous assignment.
 
 4. To check that the bounds and work groups are right, temporarily change the shader to process only the left half
-   of the image: write the input color for `pixel.x < size.x / 2` and, for example, red `vec4(1, 0, 0, 1)` otherwise.
-   The boundary should be a straight vertical line through the middle of the texture. Then revert the change.
+   of the image: write the input color for `pixel.x < size.x / 2` and a color that does not appear in the texture,
+   e.g. magenta `vec4(1, 0, 1, 1)`, otherwise. In the texture the boundary is the vertical line u = 0.5, which on the
+   pyramid passes only through two opposite vertices of the base (see [`uv.svg`](../12_oa_Textures/uv.svg)). So two
+   side faces keep their colors, the other two become entirely magenta, and the base, seen from below, is split along
+   its diagonal:
+   <p align="center"><img alt="Pyramid with the right half of the texture replaced by magenta" src="left_half.png" width="50%"></p>
+
+   Then revert the change.
 
 ## Grayscale
 
