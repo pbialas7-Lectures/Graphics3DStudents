@@ -99,7 +99,8 @@ namespace xe {
         }
 
         /**
-         * @brief Saves the content of the back buffer to screenshot_<n>.png, where n counts the screenshots.
+         * @brief Saves the content of the back buffer to screenshot_<n>.png, with the lowest n (counting from 0)
+         * not used by an existing file in the current directory, so earlier screenshots are not overwritten.
          *
          * Call it after rendering the frame and before the buffers are swapped. Pressing Ctrl-S does this
          * automatically after the next frame(), so the screenshot does not contain the ImGui windows.
@@ -212,7 +213,7 @@ namespace xe {
 
         void loop(); // main loop
 
-        unsigned int screenshot_n_; // number of the next screenshot
+        unsigned int screenshot_n_; // number tried first for the next screenshot
         int mouse_buttons_down_ = 0; // buttons pressed outside ImGui and not yet released, motion is passed while > 0
         bool screenshot_requested_ = false; // set by Ctrl-S, the screenshot is taken after the next frame()
 

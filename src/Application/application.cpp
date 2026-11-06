@@ -16,8 +16,8 @@
 #include "Application/application.h"
 
 #include <iostream>
-#include <sstream>
 #include <charconv>
+#include <filesystem>
 #include <optional>
 #include <string_view>
 #include <vector>
@@ -463,7 +463,7 @@ void xe::Application::glfw_window_refresh_callback(GLFWwindow *window) {
 }
 
 /**
- * @brief Saves the back buffer of the window to screenshot_<n>.png.
+ * @brief Saves the back buffer of the window to screenshot_<n>.png, with the lowest n not used by an existing file.
  */
 void xe::Application::save_frame_buffer() {
     auto [w, h] = frame_buffer_size();
@@ -500,18 +500,23 @@ void xe::Application::save_frame_buffer() {
     for (int i = 0; i < 4; ++i)
         OGL_CALL(glPixelStorei(pack_parameters[i], saved_values[i]));
 
+    // The numbering starts at 0 in every run, so names of files already in the current directory, e.g. saved in an
+    // earlier run, are skipped, not to overwrite them.
+    std::string file_name;
+    std::error_code ec;
+    do {
+        file_name = "screenshot_" + std::to_string(screenshot_n_++) + ".png";
+    } while (std::filesystem::exists(file_name, ec));
+
     // OpenGL stores the rows bottom to top, image files top to bottom. The flip is a global stb setting, so it is
     // switched off again, not to affect other images written with stb.
-    std::stringstream ss;
-    ss << "screenshot_" << screenshot_n_ << ".png";
     stbi_flip_vertically_on_write(1);
-    auto written = stbi_write_png(ss.str().c_str(), w, h, 3, data.data(), w * 3);
+    auto written = stbi_write_png(file_name.c_str(), w, h, 3, data.data(), w * 3);
     stbi_flip_vertically_on_write(0);
     if (written) {
-        spdlog::info("Saved screenshot to {}", ss.str());
-        ++screenshot_n_;
+        spdlog::info("Saved screenshot to {}", file_name);
     } else {
-        spdlog::error("Cannot write screenshot to {}", ss.str());
+        spdlog::error("Cannot write screenshot to {}", file_name);
     }
 }
 
