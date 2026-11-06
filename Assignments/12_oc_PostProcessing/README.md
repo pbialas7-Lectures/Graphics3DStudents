@@ -155,9 +155,6 @@ precise, which is the reason for using sRGB in the first place.
    the same too. (Some older drivers do convert the sRGB values during a blit anyway; if the image looks too dark, do
    not worry, the next section replaces the blit.)
 
-   This is also a good moment to look at the frame in RenderDoc (Ctrl-F): the texture viewer shows the color
-   attachment, and the pipeline state of the draw calls shows which framebuffer they wrote to.
-
 ## Window resize
 
 The attachments have the size of the window, so they must change together with it. Textures created with
@@ -476,13 +473,10 @@ program, made of `fullscreen_vs.glsl` and `display_fs.glsl`.
 
 ## Checks
 
-1. In RenderDoc, look at a frame of each path: not counting the draws of the ImGui "Info" window, the fragment path
-   has two draw calls, the compute path a draw, a dispatch and a draw. Inspect `processed_` after the dispatch.
-
-2. Temporarily remove the `clamp` from the `l` function. Depending on the driver the border of the window may
+1. Temporarily remove the `clamp` from the `l` function. Depending on the driver the border of the window may
    show a dark or noisy frame. The result is undefined, so it can also look fine on your computer.
 
-3. Temporarily remove the gamma correction from `display_fs.glsl` and switch to the compute path with `C`
+2. Temporarily remove the gamma correction from `display_fs.glsl` and switch to the compute path with `C`
    (`display_fs.glsl` is not used in the fragment path). The image becomes too dark, which shows that the processing
    works on linear values.
 
