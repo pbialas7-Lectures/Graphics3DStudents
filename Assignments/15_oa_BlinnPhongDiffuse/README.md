@@ -316,6 +316,11 @@ uniform buffer.
    attenuation does not grow without bound close to the light. Point lights, their units and their attenuation are
    discussed in detail in S. Lagarde and C. de Rousiers, [_Moving Frostbite to Physically Based Rendering_](https://seblagarde.wordpress.com/wp-content/uploads/2015/07/course_notes_moving_frostbite_to_pbr_v32.pdf), SIGGRAPH 2014 course notes.
 
+   With the camera, the lights and the ambient light from the previous steps, the square should look like this:
+   brightest in the middle, right under the light, and darker towards the corners, which are further from the light
+   and lit at a lower angle:
+   <p align="center"><img alt="Square lit by a point light" src="diffuse.png" width="50%"></p>
+
 ## Back faces
 
 When turning the camera, you will notice that the back face of the square is also lit. This is because the normal vector

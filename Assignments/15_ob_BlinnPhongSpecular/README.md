@@ -38,7 +38,10 @@ described in the [Preparing the assignments](../README.md#preparing-the-assignme
    `max(dot(normal, light_dir), 0.0)`, i.e. everything that the diffuse term is multiplied by, apart from `color` and
    `INV_PI`, and `INV_PI_8` is a constant equal to 1/(8 pi).
 
-4. Add the specular component to the fragment color in the fragment shader.
+4. Add the specular component to the fragment color in the fragment shader. A small, bright highlight should appear
+   in the middle of the square, where the half-vector is parallel to the normal; the rest of the square looks as at the
+   end of the previous assignment:
+   <p align="center"><img alt="Square with a specular highlight" src="specular.png" width="50%"></p>
 
 5. Add fields for `Ks` and `Ns` in the `BlinnPhongMaterial` class.
 
