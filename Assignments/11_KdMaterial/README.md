@@ -54,9 +54,16 @@ If the colors are not provided in the vertex buffer, the resulting color will be
 
    namespace xe {
        class KdMaterial : public AbstractMaterial<KdMaterial> {
+       public:
+           // constructors and methods
+
+       private:
+           // fields
        };
    }
    ```
+   The members of a `class` are private by default, so put the constructor and the methods added below in the
+   `public` section, otherwise `app.cpp` cannot use them, and the fields in the `private` one.
    In the `app.cpp` file of the assignment include this header with `#include "Engine/KdMaterial.h"`.
 
    The `KdMaterial` class should have a constant field `Kd_` of type `glm::vec4` that will
@@ -70,6 +77,17 @@ If the colors are not provided in the vertex buffer, the resulting color will be
    later.
 
    Put the definitions of the other methods of this class into a new `KdMaterial.cpp` file in the `Engine` directory.
+   The class is in the `xe` namespace, so put the definitions inside the namespace as well:
+   ```c++
+   #include "KdMaterial.h"
+
+   #include "Application/utils.h"
+
+   namespace xe {
+       // definitions of the KdMaterial methods
+   }
+   ```
+   (`Application/utils.h` provides `OGL_CALL`.)
    The `Engine` library collects its source files using `file(GLOB ...)` in its `CMakeLists.txt`, so after creating a
    new `.cpp` file you have to re-run CMake (e.g. `cmake ..` in the `build` directory, or reload the CMake project in
    your IDE). Otherwise, the new file will not be compiled and you will get "undefined reference" errors when linking.
