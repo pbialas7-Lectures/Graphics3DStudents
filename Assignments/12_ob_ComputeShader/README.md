@@ -127,7 +127,12 @@ images with four channels), and sRGB formats cannot be used for writing from sha
       the access, and the format, which again must match the format of the texture,
     - dispatch the shader with `glDispatchCompute`, computing the number of work groups in each direction as `width`
       (respectively `height`) divided by 16 and rounded __up__,
-    - unbind the texture and the image and set the current program to zero.
+    - unbind the texture and the image and set the current program to zero. To unbind the image, bind texture zero
+      to the image unit:
+      ```c++
+      OGL_CALL(glBindImageTexture(0, 0, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA16F));
+      ```
+      The format must be a valid image format even then: with format `0` the call fails with `GL_INVALID_VALUE`.
 
    As we will not use the compute program anymore, delete it with `glDeleteProgram`. Do not delete the original
    texture yet: the material still uses it until step 3.
