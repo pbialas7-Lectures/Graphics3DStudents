@@ -35,9 +35,10 @@ the ownership and leaves the source empty:
 xe::gl::Texture other = std::move(texture);   // now `other` owns the texture and `texture` is empty
 ```
 
-The object is deleted when its last owner is destroyed, so the owner must live as long as the object is used, and it
-must be destroyed while the OpenGL context still exists. Fields of `SimpleShapeApplication` and of the materials
-satisfy both: they are destroyed when the application or the material is, before the window and its context.
+The object is deleted when its owner is destroyed (or when the handle is reset or another handle is moved into it),
+so the owner must live as long as the object is used, and it must be destroyed while the OpenGL context still exists.
+Fields of `SimpleShapeApplication` and of the materials satisfy both: they are destroyed when the application or the
+material is, before the window and its context.
 
 To see why, follow what happens to `app` in `main`:
 

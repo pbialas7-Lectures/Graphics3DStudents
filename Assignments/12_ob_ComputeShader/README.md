@@ -60,8 +60,8 @@ images with four channels), and sRGB formats cannot be used for writing from sha
    We choose the `GL_RGBA16F` format (four 16-bit floating point channels) because the compute shader will write
    _linear_ color values. Storing linear values in 8 bits per channel would lose precision in dark colors, which you
    would see as banding. The format has four channels even if the image has only three, because the formats that can
-   be used for writing from shaders have one, two or four channels of the same size. The only three-channel exception
-   is `GL_R11F_G11F_B10F`, with less precision than `GL_RGBA16F`.
+   be used for writing from shaders have one, two or four channels. The only three-channel one is
+   `GL_R11F_G11F_B10F`, with less precision than `GL_RGBA16F`.
 
 ## The compute shader
 
@@ -95,7 +95,8 @@ images with four channels), and sRGB formats cannot be used for writing from sha
    The output is an _image_, not a sampler. Images are bound to _image units_, which are different from texture units,
    so both can use binding zero. The `rgba16f` qualifier must match the format given when binding the texture to the
    image unit (see below), which in turn must be compatible with the format of the texture. The `imageStore`
-   function writes the value to the given pixel; no conversion is done, so we write linear values.
+   function writes the value to the given pixel. It is only converted to the 16-bit floats of the format, no sRGB
+   conversion is done, so we write linear values.
 
    The `layout(binding = ...)` qualifier assigns the units directly in the shader, so we do not need the
    `glGetUniformLocation` and `glUniform1i` calls used in the previous assignment.
