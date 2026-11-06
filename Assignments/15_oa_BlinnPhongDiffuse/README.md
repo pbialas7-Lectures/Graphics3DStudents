@@ -221,9 +221,10 @@ reflected from other objects in the scene.
 5. In the fragment shader assign the product of `Ka` and `ambient` to the `rgb` components of `vFragColor`
    (`Ka` is a `vec4` and `ambient` a `vec3`):
    ```glsl
-   vFragColor.rgb = Ka.rgb * ambient;
+   vFragColor.rgb = srgb_gamma_correction(Ka.rgb * ambient);
    ```
-   You should see a dark, but not black, square.
+   As in the `Kd` shader, the color computed in linear space is converted to sRGB before it is written. You should
+   see a uniformly gray square, darker than the background.
 
 ### Point light source
 
