@@ -127,8 +127,9 @@ The first two do not produce an OpenGL error. If nothing is drawn or the colors 
   to be bound, or generates `GL_INVALID_OPERATION` if none is.
 
 - **Forgetting `glVertexArrayAttribBinding`.** By default attribute `i` reads from binding point `i`. If everything
-  lives in binding `0`, attribute `0` works by accident and attribute `1` reads from the (empty) binding `1`. Always
-  connect the attributes explicitly.
+  lives in binding `0`, attribute `0` works by accident and attribute `1` reads from the (empty) binding `1`. OpenGL
+  reports no error, but the result is undefined: typically wrong (often black) colors, but nothing may be drawn, or
+  the program may crash. Always connect the attributes explicitly.
 
 - **`glGenVertexArrays` with DSA functions.** `glGenVertexArrays` only reserves a name; the VAO object comes into being
   when it is first bound. A DSA function called with such a name generates `GL_INVALID_OPERATION`. Use
