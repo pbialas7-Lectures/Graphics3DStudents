@@ -169,8 +169,9 @@ The attachments have the size of the window, so they must change together with i
 2. In `framebuffer_resize_callback`, after the check for the zero size, call `delete_framebuffer()` and
    `create_framebuffer(w, h)`. Resize the window and check that the image is not stretched or cut.
 
-3. In the `cleanup` method call `delete_framebuffer()`, before `Application::cleanup()`: OpenGL objects must be
-   deleted while the context still exists.
+3. In the `cleanup` method call `delete_framebuffer()`, followed as before by `Application::cleanup()`. OpenGL
+   objects must be deleted while the context still exists, and `cleanup` runs while it does: the window and its
+   context are destroyed only later, in the destructor of the base class `Application`.
 
 ## Displaying the texture
 
