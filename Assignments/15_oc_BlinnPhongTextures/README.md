@@ -11,7 +11,8 @@ described in the [Preparing the assignments](../README.md#preparing-the-assignme
 ## The model
 
 We will use the textures of a metal plate from the `Models/metal_plate/textures` directory. The `Models` directory
-contains the model `square_textures.obj`, the same square as in `square_specular.obj`, with the material
+contains the model `square_textures.obj`, the same square as in your `square_specular.obj`, but with texture
+coordinates added (the `vt` lines, and faces in the `v/vt/vn` format), which the textures need. Its material is in
 `square_textures.mtl`:
 
 ```

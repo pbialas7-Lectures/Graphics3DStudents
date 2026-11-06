@@ -77,7 +77,8 @@ buffer with the given stride to the binding point `0`, and all the attributes ar
 2. In the vertex shader change the location of the `a_vertex_color` to five (5). Change the corresponding attribute
    index, i.e. the value of the `COLOR_LOCATION` constant used in the calls to `glEnableVertexArrayAttrib`,
    `glVertexArrayAttribFormat` and `glVertexArrayAttribBinding` (but not the binding point, `VERTEX_BUFFER_BINDING`,
-   which stays `0`). Check that the pyramid still has its colors before going further.
+   which stays `0`). Location 5 is the one the `Mesh` class uses for the color attribute, `xe::AttributeType::COLOR_0`
+   (see `Engine/Mesh.h`). Check that the pyramid still has its colors before going further.
 
 3. Next we have to create the mesh for our pyramid in the `init` method. So start with creating a new `Mesh`
    ```c++
@@ -98,11 +99,13 @@ buffer with the given stride to the binding point `0`, and all the attributes ar
    method:
    ```c++
    pyramid->load_vertices(0, vertices.size() * sizeof(GLfloat), vertices.data());
+   pyramid->add_attribute(xe::AttributeType::POSITION, 3, GL_FLOAT, 0);
    ```
-   The arguments are the offset __in bytes__ into the vertex buffer at which to start writing, the number of bytes to
-   write, and a pointer to the data. The arguments of `add_attribute(type, size, gl_type, offset)` are the attribute
+   The arguments of `load_vertices` are the offset __in bytes__ into the vertex buffer at which to start writing, the
+   number of bytes to write, and a pointer to the data. The arguments of `add_attribute(type, size, gl_type, offset)` are the attribute
    type (e.g. `xe::AttributeType::POSITION`), the number of its components, the type of the components (e.g.
-   `GL_FLOAT`), and the offset __in bytes__ of the attribute from the beginning of the vertex.
+   `GL_FLOAT`), and the offset __in bytes__ of the attribute from the beginning of the vertex. Add the color attribute,
+   `xe::AttributeType::COLOR_0`, in the same way.
 
 5. Similarly, load data into the index buffer using `load_indices` method. It takes the same arguments as
    `load_vertices`.
