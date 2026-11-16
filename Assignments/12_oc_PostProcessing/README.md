@@ -16,8 +16,8 @@ Start by copying the `12_ob_ComputeShader` assignment to a new `12_oc_PostProces
 ## Simulating color blindness
 
 Before we start, we will give the pyramid its colors back. Instead of the grayscale conversion, the compute shader from
-the previous assignment will show the texture as seen by a person with _deuteranopia_, the most common form of
-red-green color blindness. People with deuteranopia lack the cones sensitive to medium wavelengths (green), so they
+the previous assignment will show the texture as seen by a person with _deuteranopia_, a form of red-green color
+blindness (its milder variant, deuteranomaly, is the most common color vision deficiency). People with deuteranopia lack the cones sensitive to medium wavelengths (green), so they
 cannot tell apart colors that differ only in their red and green components.
 
 [Machado, Oliveira and Fernandes (2009)](https://doi.org/10.1109/TVCG.2009.113)
