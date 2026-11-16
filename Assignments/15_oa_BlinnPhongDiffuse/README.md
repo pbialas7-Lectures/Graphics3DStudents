@@ -21,7 +21,11 @@ Start by copying the `13_OBJReader` assignment to a new `15_oa_BlinnPhongDiffuse
 ## Blinn-Phong material
 
 We will use the Blinn-Phong lighting model given by the equation:
-<p align="center"><img alt="Blinn-Phong lighting equation" src="phong.png" width="40%"></p>
+<p align="center"><img alt="Blinn-Phong lighting equation" src="phong.png" width="70%"></p>
+
+Here ⊗ is the component-wise product of colors and the sum runs over the lights. For light _i_, c_light,i is its
+color multiplied by its intensity, d_i its distance from the fragment and r_i its radius. The dot products of the unit
+vectors are clamped at zero, so that light from behind the surface contributes nothing.
 
 In this assignment we will only use the first two terms of the equation, the ambient and diffuse lighting.
 
@@ -37,7 +41,7 @@ In this assignment we will only use the first two terms of the equation, the amb
    In the file `square.mtl` change the `illum 0` to `illum 1` and add the `Ka` coefficient with same value as `Kd`.
 
    The `Kd` coefficient corresponds to the `c_diff` variable in the lighting equation and
-   the `Ka` coefficient corresponds to the `c_ambient` variable.
+   the `Ka` coefficient corresponds to the `c_amb` variable.
 
    Everything should look as previously, but a warning is printed that the material needs normals and that
    `KdMaterial` is used instead. Lighting needs normal vectors, and your `square.obj` does not have them yet, so the OBJ

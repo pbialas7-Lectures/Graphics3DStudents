@@ -21,7 +21,7 @@ described in the [Preparing the assignments](../README.md#preparing-the-assignme
 
 3. Calculate the specular component of the Blinn-Phong model according to the formula:
 
-   <p align="center"><img alt="Blinn-Phong lighting equation" src="phong.png" width="50%"></p>
+   <p align="center"><img alt="Blinn-Phong lighting equation" src="phong.png" width="70%"></p>
 
    You will need the `Ks` and `Ns` parameters. `Ks` corresponds to c_spec in the formula and represents the
    specular color of the surface. `Ns` governs the _shininess_ of the surface. For now, set them to white (1.0,1.0,1.0)
